@@ -39,6 +39,9 @@
         }
         input:focus, select:focus { outline: none; border-color: #1A6B5A; box-shadow: 0 0 0 3px rgba(26, 107, 90, 0.2); }
         .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 480px) {
+            .row-2 { grid-template-columns: 1fr; }
+        }
         button {
             width: 100%;
             background: #1A6B5A;
@@ -123,63 +126,61 @@
             <label>📧 Email <span class="required-star">*</span></label>
             <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
         </div>
-        <div class="row-2">
-            <div class="input-group">
-                <label>💼 Position / Title <span class="required-star">*</span></label>
-                <select id="position">
-                    <option value="">-- Select Position --</option>
-                    <option value="Executive Director">Executive Director</option>
-                    <option value="Program Manager">Program Manager</option>
-                    <option value="Project Coordinator">Project Coordinator</option>
-                    <option value="Humanitarian Advisor">Humanitarian Advisor</option>
-                    <option value="Country Director">Country Director</option>
-                    <option value="Operations Manager">Operations Manager</option>
-                    <option value="Field Coordinator">Field Coordinator</option>
-                    <option value="Monitoring & Evaluation Officer">Monitoring & Evaluation Officer</option>
-                    <option value="Logistics Coordinator">Logistics Coordinator</option>
-                    <option value="Finance Manager">Finance Manager</option>
-                    <option value="HR Manager">HR Manager</option>
-                    <option value="Communications Officer">Communications Officer</option>
-                    <option value="Advocacy Specialist">Advocacy Specialist</option>
-                    <option value="Protection Officer">Protection Officer</option>
-                    <option value="Emergency Response Coordinator">Emergency Response Coordinator</option>
-                    <option value="Community Engagement Lead">Community Engagement Lead</option>
-                    <option value="Consultant">Consultant</option>
-                    <option value="Researcher">Researcher</option>
-                    <option value="Student">Student</option>
-                    <option value="Other">Other</option>
-                </select>
-                <div id="positionOtherGroup" class="other-input">
-                    <input type="text" id="positionOther" placeholder="Please specify your position">
-                </div>
+        <div class="input-group">
+            <label>💼 Position / Title <span class="required-star">*</span></label>
+            <select id="position">
+                <option value="">-- Select Position --</option>
+                <option value="Executive Director">Executive Director</option>
+                <option value="Program Manager">Program Manager</option>
+                <option value="Project Coordinator">Project Coordinator</option>
+                <option value="Humanitarian Advisor">Humanitarian Advisor</option>
+                <option value="Country Director">Country Director</option>
+                <option value="Operations Manager">Operations Manager</option>
+                <option value="Field Coordinator">Field Coordinator</option>
+                <option value="Monitoring & Evaluation Officer">Monitoring & Evaluation Officer</option>
+                <option value="Logistics Coordinator">Logistics Coordinator</option>
+                <option value="Finance Manager">Finance Manager</option>
+                <option value="HR Manager">HR Manager</option>
+                <option value="Communications Officer">Communications Officer</option>
+                <option value="Advocacy Specialist">Advocacy Specialist</option>
+                <option value="Protection Officer">Protection Officer</option>
+                <option value="Emergency Response Coordinator">Emergency Response Coordinator</option>
+                <option value="Community Engagement Lead">Community Engagement Lead</option>
+                <option value="Consultant">Consultant</option>
+                <option value="Researcher">Researcher</option>
+                <option value="Student">Student</option>
+                <option value="Other">Other</option>
+            </select>
+            <div id="positionOtherGroup" class="other-input">
+                <input type="text" id="positionOther" placeholder="Please specify your position">
             </div>
-            <div class="input-group">
-                <label>🌍 Country <span class="required-star">*</span></label>
-                <select id="country">
-                    <option value="">-- Select Country --</option>
-                    <option value="Algeria">Algeria</option>
-                    <option value="Bahrain">Bahrain</option>
-                    <option value="Djibouti">Djibouti</option>
-                    <option value="Egypt">Egypt</option>
-                    <option value="Iraq">Iraq</option>
-                    <option value="Jordan">Jordan</option>
-                    <option value="Kuwait">Kuwait</option>
-                    <option value="Lebanon">Lebanon</option>
-                    <option value="Libya">Libya</option>
-                    <option value="Mauritania">Mauritania</option>
-                    <option value="Morocco">Morocco</option>
-                    <option value="Oman">Oman</option>
-                    <option value="Palestine">Palestine</option>
-                    <option value="Qatar">Qatar</option>
-                    <option value="Saudi Arabia">Saudi Arabia</option>
-                    <option value="Sudan">Sudan</option>
-                    <option value="Syria">Syria</option>
-                    <option value="Tunisia">Tunisia</option>
-                    <option value="United Arab Emirates">United Arab Emirates</option>
-                    <option value="Yemen">Yemen</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
+        </div>
+        <div class="input-group">
+            <label>🌍 Country <span class="required-star">*</span></label>
+            <select id="country">
+                <option value="">-- Select Country --</option>
+                <option value="Algeria">Algeria</option>
+                <option value="Bahrain">Bahrain</option>
+                <option value="Djibouti">Djibouti</option>
+                <option value="Egypt">Egypt</option>
+                <option value="Iraq">Iraq</option>
+                <option value="Jordan">Jordan</option>
+                <option value="Kuwait">Kuwait</option>
+                <option value="Lebanon">Lebanon</option>
+                <option value="Libya">Libya</option>
+                <option value="Mauritania">Mauritania</option>
+                <option value="Morocco">Morocco</option>
+                <option value="Oman">Oman</option>
+                <option value="Palestine">Palestine</option>
+                <option value="Qatar">Qatar</option>
+                <option value="Saudi Arabia">Saudi Arabia</option>
+                <option value="Sudan">Sudan</option>
+                <option value="Syria">Syria</option>
+                <option value="Tunisia">Tunisia</option>
+                <option value="United Arab Emirates">United Arab Emirates</option>
+                <option value="Yemen">Yemen</option>
+                <option value="Other">Other</option>
+            </select>
         </div>
 
         <div id="cityWrapper" class="city-wrapper">
@@ -431,19 +432,17 @@
         subscribeBtn.textContent = '⏳ Subscribing...';
         showMessage(messageDiv, MSG.submitting, 'info-box');
         
-        const saved = await saveToGoogleSheets(userData);
-        
-        if (saved) {
-            showMessage(messageDiv, MSG.success, 'success-box');
-            localStorage.setItem('subscriberEmail', email);
-            localStorage.setItem('subscriberName', name);
-            resetForm();
-        } else {
-            showMessage(messageDiv, MSG.saveError, 'error-box');
-        }
+        // Show success IMMEDIATELY — don't wait for the slow Google server
+        showMessage(messageDiv, MSG.success, 'success-box');
+        localStorage.setItem('subscriberEmail', email);
+        localStorage.setItem('subscriberName', name);
+        resetForm();
         
         subscribeBtn.disabled = false;
         subscribeBtn.textContent = '📨 Subscribe Now';
+        
+        // Send to Google Sheets in the background (fire and forget)
+        saveToGoogleSheets(userData);
     }
     
     setupOtherOption('position', 'positionOther');
