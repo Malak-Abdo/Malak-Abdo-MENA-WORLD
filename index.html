@@ -357,21 +357,20 @@
             formData.append('linkedin', userData.linkedin || '');
             formData.append('verified', 'true');
             
-            const now = new Date();
+           const now = new Date();
 const formattedDate = now.toLocaleString('en-GB', { timeZone: 'Asia/Aden' });
 formData.append('timestamp', formattedDate);
-            
-            fetch(YOUR_SCRIPT_URL, { 
-                method: 'POST', 
-                mode: 'no-cors', 
-                body: formData,
-                keepalive: true
-            }).catch(function(err) {
-                console.warn('Background save failed (silent):', err);
-            });
-        }, 0);
-    }
-    
+
+fetch(YOUR_SCRIPT_URL, { 
+    method: 'POST', 
+    mode: 'no-cors', 
+    body: formData,
+    keepalive: true
+}).catch(function(err) {
+    console.warn('Background save failed (silent):', err);
+});
+}, 0);
+}
     function showMessage(element, text, type) {
         element.textContent = text;
         element.className = type;
