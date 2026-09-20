@@ -220,10 +220,8 @@
 </div>
 
 <script>
-    // ========== CONFIGURATION ==========
     const YOUR_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx52znsbqkcdU7VAj23ymP9IUkXI9I6h_p7Xr7n3yuE_1-KnO98qVub9ijx0cK3yb31/exec';
     
-    // ========== CITY DATA BY COUNTRY ==========
     const CITIES_BY_COUNTRY = {
         'Algeria': ['Algiers', 'Oran', 'Constantine', 'Annaba', 'Blida', 'Batna', 'Sétif', 'Tlemcen', 'Other'],
         'Bahrain': ['Manama', 'Riffa', 'Muharraq', 'Hamad Town', 'A\'ali', 'Isa Town', 'Other'],
@@ -261,7 +259,6 @@
         saveError: '⚠️ Failed to save data. Please try again.'
     };
     
-    // ========== OTHER OPTION HANDLER ==========
     function setupOtherOption(selectId, otherInputId) {
         const select = document.getElementById(selectId);
         const otherGroup = document.getElementById(otherInputId + 'Group');
@@ -290,7 +287,6 @@
         return select.value;
     }
     
-    // ========== COUNTRY → CITY LOGIC ==========
     function setupCountryCity() {
         const countrySelect = document.getElementById('country');
         const cityWrapper = document.getElementById('cityWrapper');
@@ -358,7 +354,6 @@
         return citySelect.value;
     }
     
-    // ========== SAVE TO GOOGLE SHEETS ONLY (NO EMAIL) ==========
     async function saveToGoogleSheets(userData) {
         const formData = new FormData();
         formData.append('action', 'register');
@@ -408,7 +403,6 @@
         document.getElementById('consent').checked = false;
     }
     
-    // ========== MAIN SUBSCRIBE FUNCTION ==========
     async function subscribe() {
         const name = document.getElementById('fullName').value.trim();
         const email = document.getElementById('email').value.trim();
@@ -422,7 +416,6 @@
         const messageDiv = document.getElementById('registerMessage');
         const subscribeBtn = document.getElementById('subscribeBtn');
         
-        // Validation
         if (!name) { showMessage(messageDiv, MSG.enterName, 'error-box'); return; }
         if (!email) { showMessage(messageDiv, MSG.enterEmail, 'error-box'); return; }
         if (!email.includes('@') || !email.includes('.')) { showMessage(messageDiv, MSG.validEmail, 'error-box'); return; }
@@ -438,7 +431,6 @@
         subscribeBtn.textContent = '⏳ Subscribing...';
         showMessage(messageDiv, MSG.submitting, 'info-box');
         
-        // Save to Google Sheets ONLY — no email sent at all
         const saved = await saveToGoogleSheets(userData);
         
         if (saved) {
@@ -454,7 +446,6 @@
         subscribeBtn.textContent = '📨 Subscribe Now';
     }
     
-    // Initialize
     setupOtherOption('position', 'positionOther');
     setupCountryCity();
     
@@ -462,8 +453,6 @@
     
     document.getElementById('email').addEventListener('keypress', (e) => { if (e.key === 'Enter') subscribe(); });
     document.getElementById('organization').addEventListener('keypress', (e) => { if (e.key === 'Enter') subscribe(); });
-    
-    console.log('✅ Subscription page ready — no OTP, no email sending');
 </script>
 </body>
 </html>
