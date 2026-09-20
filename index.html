@@ -358,8 +358,8 @@
             formData.append('verified', 'true');
             
             const now = new Date();
-            const formattedDate = now.toLocaleString('en-GB', { timeZone: 'UTC' });
-            formData.append('timestamp', formattedDate);
+const formattedDate = now.toLocaleString('en-GB', { timeZone: 'Asia/Aden' });
+formData.append('timestamp', formattedDate);
             
             fetch(YOUR_SCRIPT_URL, { 
                 method: 'POST', 
