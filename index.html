@@ -38,10 +38,6 @@
             transition: border 0.2s;
         }
         input:focus, select:focus { outline: none; border-color: #1A6B5A; box-shadow: 0 0 0 3px rgba(26, 107, 90, 0.2); }
-        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        @media (max-width: 480px) {
-            .row-2 { grid-template-columns: 1fr; }
-        }
         button {
             width: 100%;
             background: #1A6B5A;
@@ -75,18 +71,8 @@
         .other-input.show { display: block; }
         .required-star { color: #e74c3c; margin-left: 3px; }
         
-        .city-wrapper {
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
-            margin: 0;
-        }
-        .city-wrapper.show {
-            max-height: 200px;
-            opacity: 1;
-            margin: 0.8rem 0;
-        }
+        #cityWrapper { display: none; }
+        #cityWrapper.show { display: block; }
         
         .checkbox-group {
             display: flex;
@@ -183,7 +169,7 @@
             </select>
         </div>
 
-        <div id="cityWrapper" class="city-wrapper">
+        <div id="cityWrapper">
             <div class="input-group">
                 <label>🏙️ City <span class="required-star">*</span></label>
                 <select id="city">
@@ -251,8 +237,11 @@
         enterEmail: '❌ Please enter your email address.',
         validEmail: '❌ Please enter a valid email address.',
         enterPosition: '❌ Please select or specify your position.',
+        enterPositionOther: '❌ Please specify your position.',
         enterCountry: '❌ Please select or specify your country.',
+        enterCountryOther: '❌ Please specify your country.',
         enterCity: '❌ Please select or specify your city.',
+        enterCityOther: '❌ Please specify your city.',
         enterOrganization: '❌ Please enter your organization name.',
         noConsent: '❌ Please agree to receive emails to continue.',
         submitting: '⏳ Submitting your subscription...',
@@ -270,7 +259,7 @@
             if (select.value === 'Other') {
                 otherGroup.classList.add('show');
                 otherInput.required = true;
-                otherInput.focus();
+                setTimeout(() => otherInput.focus(), 50);
             } else {
                 otherGroup.classList.remove('show');
                 otherInput.required = false;
@@ -303,7 +292,7 @@
             if (country === 'Other') {
                 countryOtherGroup.classList.add('show');
                 countryOtherInput.required = true;
-                countryOtherInput.focus();
+                setTimeout(() => countryOtherInput.focus(), 50);
                 cityWrapper.classList.remove('show');
                 citySelect.innerHTML = '<option value="">-- Select City --</option>';
                 return;
@@ -339,7 +328,7 @@
             if (citySelect.value === 'Other') {
                 cityOtherGroup.classList.add('show');
                 cityOtherInput.required = true;
-                cityOtherInput.focus();
+                setTimeout(() => cityOtherInput.focus(), 50);
             } else {
                 cityOtherGroup.classList.remove('show');
                 cityOtherInput.required = false;
@@ -407,9 +396,12 @@
     async function subscribe() {
         const name = document.getElementById('fullName').value.trim();
         const email = document.getElementById('email').value.trim();
-        const position = getSelectValueWithOther('position', 'positionOther');
-        const country = getSelectValueWithOther('country', 'countryOther');
-        const city = getCityValue();
+        const positionSelect = document.getElementById('position');
+        const positionOther = document.getElementById('positionOther');
+        const countrySelect = document.getElementById('country');
+        const countryOther = document.getElementById('countryOther');
+        const citySelect = document.getElementById('city');
+        const cityOther = document.getElementById('cityOther');
         const organization = document.getElementById('organization').value.trim();
         const linkedin = document.getElementById('linkedin').value.trim();
         const consent = document.getElementById('consent').checked;
@@ -417,14 +409,46 @@
         const messageDiv = document.getElementById('registerMessage');
         const subscribeBtn = document.getElementById('subscribeBtn');
         
+        // Name
         if (!name) { showMessage(messageDiv, MSG.enterName, 'error-box'); return; }
+        
+        // Email
         if (!email) { showMessage(messageDiv, MSG.enterEmail, 'error-box'); return; }
         if (!email.includes('@') || !email.includes('.')) { showMessage(messageDiv, MSG.validEmail, 'error-box'); return; }
-        if (!position) { showMessage(messageDiv, MSG.enterPosition, 'error-box'); return; }
-        if (!country) { showMessage(messageDiv, MSG.enterCountry, 'error-box'); return; }
-        if (!city) { showMessage(messageDiv, MSG.enterCity, 'error-box'); return; }
+        
+        // Position
+        if (!positionSelect.value) { showMessage(messageDiv, MSG.enterPosition, 'error-box'); return; }
+        if (positionSelect.value === 'Other' && !positionOther.value.trim()) {
+            showMessage(messageDiv, MSG.enterPositionOther, 'error-box');
+            positionOther.focus();
+            return;
+        }
+        
+        // Country
+        if (!countrySelect.value) { showMessage(messageDiv, MSG.enterCountry, 'error-box'); return; }
+        if (countrySelect.value === 'Other' && !countryOther.value.trim()) {
+            showMessage(messageDiv, MSG.enterCountryOther, 'error-box');
+            countryOther.focus();
+            return;
+        }
+        
+        // City
+        if (!citySelect.value) { showMessage(messageDiv, MSG.enterCity, 'error-box'); return; }
+        if (citySelect.value === 'Other' && !cityOther.value.trim()) {
+            showMessage(messageDiv, MSG.enterCityOther, 'error-box');
+            cityOther.focus();
+            return;
+        }
+        
+        // Organization
         if (!organization) { showMessage(messageDiv, MSG.enterOrganization, 'error-box'); return; }
+        
+        // Consent
         if (!consent) { showMessage(messageDiv, MSG.noConsent, 'error-box'); return; }
+        
+        const position = getSelectValueWithOther('position', 'positionOther');
+        const country = getSelectValueWithOther('country', 'countryOther');
+        const city = getCityValue();
         
         const userData = { name, email, position, country, city, organization, linkedin: linkedin || '' };
         
@@ -432,7 +456,6 @@
         subscribeBtn.textContent = '⏳ Subscribing...';
         showMessage(messageDiv, MSG.submitting, 'info-box');
         
-        // Show success IMMEDIATELY — don't wait for the slow Google server
         showMessage(messageDiv, MSG.success, 'success-box');
         localStorage.setItem('subscriberEmail', email);
         localStorage.setItem('subscriberName', name);
@@ -441,7 +464,6 @@
         subscribeBtn.disabled = false;
         subscribeBtn.textContent = '📨 Subscribe Now';
         
-        // Send to Google Sheets in the background (fire and forget)
         saveToGoogleSheets(userData);
     }
     
