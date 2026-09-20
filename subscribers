@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Malak Abdo | MENA ⇄ WORLD Community</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: linear-gradient(145deg, #146B5C 0%, #0E4F44 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .card {
+            background: #FFFFFF;
+            border-radius: 56px;
+            padding: 2rem;
+            max-width: 550px;
+            width: 100%;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.25);
+        }
+        h1 { color: #0C2E3B; font-size: 1.9rem; margin: 0.5rem 0 0.5rem; font-weight: 700; text-align: center; }
+        h2 { color: #1A4E44; font-size: 1rem; margin-bottom: 1.5rem; text-align: center; font-weight: normal; }
+        .input-group { margin: 0.8rem 0; text-align: left; }
+        label { font-size: 0.85rem; font-weight: 600; color: #1A4E44; display: block; margin-bottom: 0.25rem; }
+        input, select {
+            width: 100%;
+            padding: 0.85rem 1.2rem;
+            border: 2px solid #E2E9F2;
+            border-radius: 60px;
+            font-size: 1rem;
+            background: #FEFEFE;
+            font-family: inherit;
+            transition: border 0.2s;
+        }
+        input:focus, select:focus { outline: none; border-color: #1A6B5A; box-shadow: 0 0 0 3px rgba(26, 107, 90, 0.2); }
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        button {
+            width: 100%;
+            background: #1A6B5A;
+            color: white;
+            padding: 0.9rem;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 1rem 0 0.5rem;
+            transition: all 0.2s;
+        }
+        button:hover { background: #0F5446; }
+        button:active { transform: scale(0.97); }
+        .error-box, .success-box, .info-box {
+            padding: 0.7rem;
+            border-radius: 40px;
+            margin-top: 0.9rem;
+            font-size: 0.85rem;
+            display: none;
+            text-align: center;
+        }
+        .error-box { background: #FFEBEE; color: #B33A3A; }
+        .success-box { background: #1A6B5A; color: white; }
+        .info-box { background: #E0F2E9; color: #146B5C; }
+        .footer-note { font-size: 0.7rem; color: #7C8B9A; margin-top: 1.5rem; text-align: center; }
+        
+        .section { transition: all 0.3s ease; }
+        .hidden { display: none !important; }
+        
+        .resend-link { text-align: center; margin-top: 0.8rem; font-size: 0.8rem; }
+        .resend-link a { color: #1A6B5A; text-decoration: none; cursor: pointer; font-weight: 600; }
+        .resend-link a:hover { text-decoration: underline; }
+        .back-link { text-align: center; margin-top: 1rem; }
+        .back-link a { color: #7C8B9A; text-decoration: none; font-size: 0.8rem; cursor: pointer; }
+        
+        .other-input { margin-top: 0.5rem; display: none; }
+        .other-input.show { display: block; }
+        .required-star { color: #e74c3c; margin-left: 3px; }
+        
+        /* City field animation */
+        .city-wrapper {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+            margin: 0;
+        }
+        .city-wrapper.show {
+            max-height: 200px;
+            opacity: 1;
+            margin: 0.8rem 0;
+        }
+        
+        /* Checkbox styling */
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+            color: #1A4E44;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-top: 0.2rem;
+            accent-color: #1A6B5A;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        .checkbox-group label {
+            font-weight: normal;
+            margin: 0;
+            cursor: pointer;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div style="text-align: center; font-size: 2.5rem;">📬</div>
+    <h1>Malak Abdo | MENA ⇄ WORLD Community</h1>
+    <h2>Subscribe to receive updates, opportunities & insights</h2>
+
+    <!-- SECTION 1: REGISTRATION FORM -->
+    <div id="registrationSection" class="section">
+        <div class="input-group">
+            <label>👤 Full Name <span class="required-star">*</span></label>
+            <input type="text" id="fullName" placeholder="e.g., Ahmed Al-Mansouri" autocomplete="name">
+        </div>
+        <div class="input-group">
+            <label>📧 Email <span class="required-star">*</span></label>
+            <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="row-2">
+            <div class="input-group">
+                <label>💼 Position / Title <span class="required-star">*</span></label>
+                <select id="position">
+                    <option value="">-- Select Position --</option>
+                    <option value="Executive Director">Executive Director</option>
+                    <option value="Program Manager">Program Manager</option>
+                    <option value="Project Coordinator">Project Coordinator</option>
+                    <option value="Humanitarian Advisor">Humanitarian Advisor</option>
+                    <option value="Country Director">Country Director</option>
+                    <option value="Operations Manager">Operations Manager</option>
+                    <option value="Field Coordinator">Field Coordinator</option>
+                    <option value="Monitoring & Evaluation Officer">Monitoring & Evaluation Officer</option>
+                    <option value="Logistics Coordinator">Logistics Coordinator</option>
+                    <option value="Finance Manager">Finance Manager</option>
+                    <option value="HR Manager">HR Manager</option>
+                    <option value="Communications Officer">Communications Officer</option>
+                    <option value="Advocacy Specialist">Advocacy Specialist</option>
+                    <option value="Protection Officer">Protection Officer</option>
+                    <option value="Emergency Response Coordinator">Emergency Response Coordinator</option>
+                    <option value="Community Engagement Lead">Community Engagement Lead</option>
+                    <option value="Consultant">Consultant</option>
+                    <option value="Researcher">Researcher</option>
+                    <option value="Student">Student</option>
+                    <option value="Other">Other</option>
+                </select>
+                <div id="positionOtherGroup" class="other-input">
+                    <input type="text" id="positionOther" placeholder="Please specify your position">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>🌍 Country <span class="required-star">*</span></label>
+                <select id="country">
+                    <option value="">-- Select Country --</option>
+                    <option value="Algeria">Algeria</option>
+                    <option value="Bahrain">Bahrain</option>
+                    <option value="Djibouti">Djibouti</option>
+                    <option value="Egypt">Egypt</option>
+                    <option value="Iraq">Iraq</option>
+                    <option value="Jordan">Jordan</option>
+                    <option value="Kuwait">Kuwait</option>
+                    <option value="Lebanon">Lebanon</option>
+                    <option value="Libya">Libya</option>
+                    <option value="Mauritania">Mauritania</option>
+                    <option value="Morocco">Morocco</option>
+                    <option value="Oman">Oman</option>
+                    <option value="Palestine">Palestine</option>
+                    <option value="Qatar">Qatar</option>
+                    <option value="Saudi Arabia">Saudi Arabia</option>
+                    <option value="Sudan">Sudan</option>
+                    <option value="Syria">Syria</option>
+                    <option value="Tunisia">Tunisia</option>
+                    <option value="United Arab Emirates">United Arab Emirates</option>
+                    <option value="Yemen">Yemen</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ✅ NEW: CITY FIELD (appears only after country selected) -->
+        <div id="cityWrapper" class="city-wrapper">
+            <div class="input-group">
+                <label>🏙️ City <span class="required-star">*</span></label>
+                <select id="city">
+                    <option value="">-- Select City --</option>
+                </select>
+                <div id="cityOtherGroup" class="other-input">
+                    <input type="text" id="cityOther" placeholder="Please specify your city">
+                </div>
+            </div>
+        </div>
+
+        <!-- Country "Other" input (if user selects Other for country) -->
+        <div id="countryOtherGroup" class="other-input" style="margin-top:0.5rem;">
+            <input type="text" id="countryOther" placeholder="Please specify your country">
+        </div>
+
+        <div class="input-group">
+            <label>🏢 Organization <span class="required-star">*</span></label>
+            <input type="text" id="organization" placeholder="Organization name">
+        </div>
+        <div class="input-group">
+            <label>🔗 LinkedIn Profile (optional)</label>
+            <input type="url" id="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="consent">
+            <label for="consent">I agree to receive emails and updates. I can unsubscribe at any time.</label>
+        </div>
+
+        <button id="sendCodeBtn">📨 Subscribe Now</button>
+        <div id="registerMessage" class="error-box"></div>
+    </div>
+
+    <!-- SECTION 2: OTP VERIFICATION -->
+    <div id="otpSection" class="section hidden">
+        <div class="input-group">
+            <label>🔐 Verification Code <span class="required-star">*</span></label>
+            <input type="text" id="otpCode" placeholder="Enter 6-digit code" maxlength="6" autocomplete="off">
+        </div>
+        <button id="verifyBtn">✓ Verify & Confirm Subscription</button>
+        <div class="resend-link">
+            <a id="resendLink">⟳ Didn't receive code? Resend</a>
+        </div>
+        <div class="back-link">
+            <a id="backLink">← Back to registration</a>
+        </div>
+        <div id="otpMessage" class="error-box"></div>
+    </div>
+
+    <div class="footer-note">🔒 Your data is safe. We never share your information.</div>
+</div>
+
+<script>
+    // ========== CONFIGURATION ==========
+    const YOUR_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx52znsbqkcdU7VAj23ymP9IUkXI9I6h_p7Xr7n3yuE_1-KnO98qVub9ijx0cK3yb31/exec';
+    
+    // ✅ CITY DATA BY COUNTRY
+    const CITIES_BY_COUNTRY = {
+        'Algeria': ['Algiers', 'Oran', 'Constantine', 'Annaba', 'Blida', 'Batna', 'Sétif', 'Tlemcen', 'Other'],
+        'Bahrain': ['Manama', 'Riffa', 'Muharraq', 'Hamad Town', 'A\'ali', 'Isa Town', 'Other'],
+        'Djibouti': ['Djibouti City', 'Ali Sabieh', 'Tadjoura', 'Obock', 'Dikhil', 'Other'],
+        'Egypt': ['Cairo', 'Alexandria', 'Giza', 'Luxor', 'Aswan', 'Port Said', 'Suez', 'Mansoura', 'Tanta', 'Asyut', 'Other'],
+        'Iraq': ['Baghdad', 'Basra', 'Mosul', 'Erbil', 'Najaf', 'Karbala', 'Kirkuk', 'Sulaymaniyah', 'Other'],
+        'Jordan': ['Amman', 'Zarqa', 'Irbid', 'Aqaba', 'Salt', 'Madaba', 'Other'],
+        'Kuwait': ['Kuwait City', 'Hawalli', 'Salmiya', 'Farwaniya', 'Jahra', 'Ahmadi', 'Other'],
+        'Lebanon': ['Beirut', 'Tripoli', 'Sidon', 'Tyre', 'Zahle', 'Jounieh', 'Byblos', 'Other'],
+        'Libya': ['Tripoli', 'Benghazi', 'Misrata', 'Zawiya', 'Sabha', 'Tobruk', 'Other'],
+        'Mauritania': ['Nouakchott', 'Nouadhibou', 'Kiffa', 'Rosso', 'Atar', 'Other'],
+        'Morocco': ['Casablanca', 'Rabat', 'Fez', 'Marrakesh', 'Tangier', 'Agadir', 'Meknes', 'Oujda', 'Kenitra', 'Other'],
+        'Oman': ['Muscat', 'Salalah', 'Sohar', 'Nizwa', 'Sur', 'Ibri', 'Other'],
+        'Palestine': ['Gaza', 'Ramallah', 'Nablus', 'Hebron', 'Bethlehem', 'Jenin', 'Rafah', 'Khan Younis', 'Other'],
+        'Qatar': ['Doha', 'Al Rayyan', 'Al Wakrah', 'Al Khor', 'Lusail', 'Other'],
+        'Saudi Arabia': ['Riyadh', 'Jeddah', 'Mecca', 'Medina', 'Dammam', 'Khobar', 'Taif', 'Tabuk', 'Abha', 'Other'],
+        'Sudan': ['Khartoum', 'Omdurman', 'Port Sudan', 'Kassala', 'Nyala', 'El Obeid', 'Other'],
+        'Syria': ['Damascus', 'Aleppo', 'Homs', 'Latakia', 'Hama', 'Deir ez-Zor', 'Other'],
+        'Tunisia': ['Tunis', 'Sfax', 'Sousse', 'Kairouan', 'Bizerte', 'Gabès', 'Other'],
+        'United Arab Emirates': ['Abu Dhabi', 'Dubai', 'Sharjah', 'Ajman', 'Ras Al Khaimah', 'Fujairah', 'Umm Al Quwain', 'Other'],
+        'Yemen': ['Sanaa', 'Aden', 'Taiz', 'Hodeidah', 'Ibb', 'Mukalla', 'Other']
+    };
+    
+    let tempUserData = null;
+    let generatedCode = null;
+    let codeExpiry = null;
+    
+    const MSG = {
+        enterName: '❌ Please enter your full name.',
+        enterEmail: '❌ Please enter your email address.',
+        validEmail: '❌ Please enter a valid email address.',
+        enterPosition: '❌ Please select or specify your position.',
+        enterCountry: '❌ Please select or specify your country.',
+        enterCity: '❌ Please select or specify your city.',
+        enterOrganization: '❌ Please enter your organization name.',
+        noConsent: '❌ Please agree to receive emails to continue.',
+        sendingCode: '📨 Sending verification code to your email...',
+        codeSent: '✅ Verification code sent to ',
+        codeSentEnd: '. Please check your inbox (including spam folder).',
+        sendError: '⚠️ Failed to send email. Please try again.',
+        enterCode: '❌ Please enter the verification code.',
+        codeExpired: '⏰ Code expired. Please request a new code.',
+        wrongCode: '❌ Incorrect code. Please try again.',
+        verifying: '✓ Verifying your subscription...',
+        success: '🎉 Subscription confirmed! Welcome to Malak Abdo | MENA ⇄ WORLD Community.',
+        saveError: '⚠️ Failed to save data. Please contact support.',
+        resending: '📨 Resending verification code...',
+        codeResent: '✅ New code sent to '
+    };
+    
+    // ========== OTHER OPTION HANDLER ==========
+    function setupOtherOption(selectId, otherInputId) {
+        const select = document.getElementById(selectId);
+        const otherGroup = document.getElementById(otherInputId + 'Group');
+        const otherInput = document.getElementById(otherInputId);
+        if (!select || !otherGroup || !otherInput) return;
+        
+        function checkOther() {
+            if (select.value === 'Other') {
+                otherGroup.classList.add('show');
+                otherInput.required = true;
+                otherInput.focus();
+            } else {
+                otherGroup.classList.remove('show');
+                otherInput.required = false;
+                otherInput.value = '';
+            }
+        }
+        select.addEventListener('change', checkOther);
+        checkOther();
+    }
+    
+    function getSelectValueWithOther(selectId, otherInputId) {
+        const select = document.getElementById(selectId);
+        const otherInput = document.getElementById(otherInputId);
+        if (select.value === 'Other') return otherInput.value.trim() || '';
+        return select.value;
+    }
+    
+    // ========== COUNTRY → CITY LOGIC ==========
+    function setupCountryCity() {
+        const countrySelect = document.getElementById('country');
+        const cityWrapper = document.getElementById('cityWrapper');
+        const citySelect = document.getElementById('city');
+        const cityOtherGroup = document.getElementById('cityOtherGroup');
+        const cityOtherInput = document.getElementById('cityOther');
+        const countryOtherGroup = document.getElementById('countryOtherGroup');
+        const countryOtherInput = document.getElementById('countryOther');
+        
+        countrySelect.addEventListener('change', function() {
+            const country = countrySelect.value;
+            
+            // Show/hide country "Other" input
+            if (country === 'Other') {
+                countryOtherGroup.classList.add('show');
+                countryOtherInput.required = true;
+                countryOtherInput.focus();
+                cityWrapper.classList.remove('show');
+                citySelect.innerHTML = '<option value="">-- Select City --</option>';
+                return;
+            } else {
+                countryOtherGroup.classList.remove('show');
+                countryOtherInput.required = false;
+                countryOtherInput.value = '';
+            }
+            
+            // If no country selected, hide city
+            if (!country) {
+                cityWrapper.classList.remove('show');
+                citySelect.innerHTML = '<option value="">-- Select City --</option>';
+                cityOtherGroup.classList.remove('show');
+                cityOtherInput.value = '';
+                return;
+            }
+            
+            // Populate city dropdown
+            const cities = CITIES_BY_COUNTRY[country] || [];
+            citySelect.innerHTML = '<option value="">-- Select City --</option>';
+            cities.forEach(city => {
+                const opt = document.createElement('option');
+                opt.value = city;
+                opt.textContent = city;
+                citySelect.appendChild(opt);
+            });
+            
+            // Show city wrapper with animation
+            cityWrapper.classList.add('show');
+            cityOtherGroup.classList.remove('show');
+            cityOtherInput.value = '';
+        });
+        
+        // City "Other" handler
+        citySelect.addEventListener('change', function() {
+            if (citySelect.value === 'Other') {
+                cityOtherGroup.classList.add('show');
+                cityOtherInput.required = true;
+                cityOtherInput.focus();
+            } else {
+                cityOtherGroup.classList.remove('show');
+                cityOtherInput.required = false;
+                cityOtherInput.value = '';
+            }
+        });
+    }
+    
+    function getCityValue() {
+        const citySelect = document.getElementById('city');
+        const cityOther = document.getElementById('cityOther');
+        if (citySelect.value === 'Other') return cityOther.value.trim() || '';
+        return citySelect.value;
+    }
+    
+    function generateCode() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+    
+    async function sendWelcomeEmailWithCode(email, name, code) {
+        const formData = new FormData();
+        formData.append('action', 'sendWelcomeWithCode');
+        formData.append('email', email);
+        formData.append('name', name);
+        formData.append('code', code);
+        
+        try {
+            await fetch(YOUR_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: formData });
+            return true;
+        } catch (error) {
+            console.error('Failed to send email:', error);
+            return false;
+        }
+    }
+    
+    async function saveToGoogleSheets(userData) {
+        const formData = new FormData();
+        formData.append('action', 'register');
+        formData.append('name', userData.name);
+        formData.append('email', userData.email);
+        formData.append('country', userData.country);
+        formData.append('city', userData.city);          // ✅ NEW
+        formData.append('position', userData.position);
+        formData.append('organization', userData.organization || '');
+        formData.append('linkedin', userData.linkedin || '');
+        formData.append('verified', 'true');
+        
+        const now = new Date();
+        const formattedDate = now.toLocaleString('en-GB', { timeZone: 'UTC' });
+        formData.append('timestamp', formattedDate);
+        
+        try {
+            await fetch(YOUR_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: formData });
+            return true;
+        } catch (error) {
+            console.error('Failed to save data:', error);
+            return false;
+        }
+    }
+    
+    function showMessage(element, text, type) {
+        element.textContent = text;
+        element.className = type;
+        element.style.display = 'block';
+        setTimeout(() => { element.style.display = 'none'; }, 5000);
+    }
+    
+    async function sendCode() {
+        const name = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const position = getSelectValueWithOther('position', 'positionOther');
+        const country = getSelectValueWithOther('country', 'countryOther');
+        const city = getCityValue();                     // ✅ NEW
+        const organization = document.getElementById('organization').value.trim();
+        const linkedin = document.getElementById('linkedin').value.trim();
+        const consent = document.getElementById('consent').checked;
+        
+        const messageDiv = document.getElementById('registerMessage');
+        
+        if (!name) { showMessage(messageDiv, MSG.enterName, 'error-box'); return; }
+        if (!email) { showMessage(messageDiv, MSG.enterEmail, 'error-box'); return; }
+        if (!email.includes('@')) { showMessage(messageDiv, MSG.validEmail, 'error-box'); return; }
+        if (!position) { showMessage(messageDiv, MSG.enterPosition, 'error-box'); return; }
+        if (!country) { showMessage(messageDiv, MSG.enterCountry, 'error-box'); return; }
+        if (!city) { showMessage(messageDiv, MSG.enterCity, 'error-box'); return; }   // ✅ NEW
+        if (!organization) { showMessage(messageDiv, MSG.enterOrganization, 'error-box'); return; }
+        if (!consent) { showMessage(messageDiv, MSG.noConsent, 'error-box'); return; }
+        
+        tempUserData = { name, email, position, country, city, organization, linkedin: linkedin || '' };
+        generatedCode = generateCode();
+        codeExpiry = Date.now() + 10 * 60 * 1000;
+        
+        console.log('📧 Verification code:', generatedCode);
+        showMessage(messageDiv, MSG.sendingCode, 'info-box');
+        
+        const emailSent = await sendWelcomeEmailWithCode(email, name, generatedCode);
+        
+        if (emailSent) {
+            showMessage(messageDiv, MSG.codeSent + email + MSG.codeSentEnd, 'success-box');
+            document.getElementById('registrationSection').classList.add('hidden');
+            document.getElementById('otpSection').classList.remove('hidden');
+            document.getElementById('otpCode').value = '';
+            document.getElementById('otpMessage').style.display = 'none';
+        } else {
+            showMessage(messageDiv, MSG.sendError, 'error-box');
+        }
+    }
+    
+    async function verifyCode() {
+        const enteredCode = document.getElementById('otpCode').value.trim();
+        const messageDiv = document.getElementById('otpMessage');
+        
+        if (!enteredCode) { showMessage(messageDiv, MSG.enterCode, 'error-box'); return; }
+        if (Date.now() > codeExpiry) { showMessage(messageDiv, MSG.codeExpired, 'error-box'); return; }
+        if (enteredCode !== generatedCode) { showMessage(messageDiv, MSG.wrongCode, 'error-box'); return; }
+        
+        showMessage(messageDiv, MSG.verifying, 'info-box');
+        const saved = await saveToGoogleSheets(tempUserData);
+        
+        if (saved) {
+            showMessage(messageDiv, MSG.success, 'success-box');
+            localStorage.setItem('subscriberEmail', tempUserData.email);
+            localStorage.setItem('subscriberName', tempUserData.name);
+        } else {
+            showMessage(messageDiv, MSG.saveError, 'error-box');
+        }
+    }
+    
+    async function resendCode() {
+        if (!tempUserData) return;
+        const messageDiv = document.getElementById('otpMessage');
+        
+        generatedCode = generateCode();
+        codeExpiry = Date.now() + 10 * 60 * 1000;
+        console.log('📧 New verification code:', generatedCode);
+        showMessage(messageDiv, MSG.resending, 'info-box');
+        
+        const emailSent = await sendWelcomeEmailWithCode(tempUserData.email, tempUserData.name, generatedCode);
+        if (emailSent) {
+            showMessage(messageDiv, MSG.codeResent + tempUserData.email, 'success-box');
+        } else {
+            showMessage(messageDiv, MSG.sendError, 'error-box');
+        }
+    }
+    
+    function backToRegistration() {
+        document.getElementById('registrationSection').classList.remove('hidden');
+        document.getElementById('otpSection').classList.add('hidden');
+        document.getElementById('otpCode').value = '';
+        document.getElementById('registerMessage').style.display = 'none';
+        document.getElementById('otpMessage').style.display = 'none';
+    }
+    
+    // Initialize
+    setupOtherOption('position', 'positionOther');
+    setupCountryCity();
+    
+    document.getElementById('sendCodeBtn').onclick = sendCode;
+    document.getElementById('verifyBtn').onclick = verifyCode;
+    document.getElementById('resendLink').onclick = resendCode;
+    document.getElementById('backLink').onclick = backToRegistration;
+    
+    document.getElementById('email').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendCode(); });
+    document.getElementById('otpCode').addEventListener('keypress', (e) => { if (e.key === 'Enter') verifyCode(); });
+    
+    console.log('✅ Subscription page ready with City field');
+</script>
+</body>
+</html>
