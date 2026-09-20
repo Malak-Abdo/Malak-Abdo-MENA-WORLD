@@ -54,6 +54,7 @@
         }
         button:hover { background: #0F5446; }
         button:active { transform: scale(0.97); }
+        button:disabled { background: #7C8B9A; cursor: not-allowed; transform: none; }
         .error-box, .success-box, .info-box {
             padding: 0.7rem;
             border-radius: 40px;
@@ -69,12 +70,6 @@
         
         .section { transition: all 0.3s ease; }
         .hidden { display: none !important; }
-        
-        .resend-link { text-align: center; margin-top: 0.8rem; font-size: 0.8rem; }
-        .resend-link a { color: #1A6B5A; text-decoration: none; cursor: pointer; font-weight: 600; }
-        .resend-link a:hover { text-decoration: underline; }
-        .back-link { text-align: center; margin-top: 1rem; }
-        .back-link a { color: #7C8B9A; text-decoration: none; font-size: 0.8rem; cursor: pointer; }
         
         .other-input { margin-top: 0.5rem; display: none; }
         .other-input.show { display: block; }
@@ -124,7 +119,7 @@
     <h1>Malak Abdo | MENA ⇄ WORLD Community</h1>
     <h2>Subscribe to receive updates, opportunities & insights</h2>
 
-    <!-- SECTION 1: REGISTRATION FORM -->
+    <!-- REGISTRATION FORM -->
     <div id="registrationSection" class="section">
         <div class="input-group">
             <label>👤 Full Name <span class="required-star">*</span></label>
@@ -193,7 +188,7 @@
             </div>
         </div>
 
-        <!-- ✅ NEW: CITY FIELD (appears only after country selected) -->
+        <!-- CITY FIELD (appears only after country selected) -->
         <div id="cityWrapper" class="city-wrapper">
             <div class="input-group">
                 <label>🏙️ City <span class="required-star">*</span></label>
@@ -206,7 +201,7 @@
             </div>
         </div>
 
-        <!-- Country "Other" input (if user selects Other for country) -->
+        <!-- Country "Other" input -->
         <div id="countryOtherGroup" class="other-input" style="margin-top:0.5rem;">
             <input type="text" id="countryOther" placeholder="Please specify your country">
         </div>
@@ -225,11 +220,10 @@
             <label for="consent">I agree to receive emails and updates. I can unsubscribe at any time.</label>
         </div>
 
-        <button id="sendCodeBtn">📨 Subscribe Now</button>
+        <button id="subscribeBtn">📨 Subscribe Now</button>
         <div id="registerMessage" class="error-box"></div>
     </div>
 
-    
     <div class="footer-note">🔒 Your data is safe. We never share your information.</div>
 </div>
 
@@ -237,7 +231,7 @@
     // ========== CONFIGURATION ==========
     const YOUR_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx52znsbqkcdU7VAj23ymP9IUkXI9I6h_p7Xr7n3yuE_1-KnO98qVub9ijx0cK3yb31/exec';
     
-    // ✅ CITY DATA BY COUNTRY
+    // ========== CITY DATA BY COUNTRY ==========
     const CITIES_BY_COUNTRY = {
         'Algeria': ['Algiers', 'Oran', 'Constantine', 'Annaba', 'Blida', 'Batna', 'Sétif', 'Tlemcen', 'Other'],
         'Bahrain': ['Manama', 'Riffa', 'Muharraq', 'Hamad Town', 'A\'ali', 'Isa Town', 'Other'],
@@ -261,10 +255,6 @@
         'Yemen': ['Sanaa', 'Aden', 'Taiz', 'Hodeidah', 'Ibb', 'Mukalla', 'Other']
     };
     
-    let tempUserData = null;
-    let generatedCode = null;
-    let codeExpiry = null;
-    
     const MSG = {
         enterName: '❌ Please enter your full name.',
         enterEmail: '❌ Please enter your email address.',
@@ -274,18 +264,10 @@
         enterCity: '❌ Please select or specify your city.',
         enterOrganization: '❌ Please enter your organization name.',
         noConsent: '❌ Please agree to receive emails to continue.',
-        sendingCode: '📨 Sending verification code to your email...',
-        codeSent: '✅ Verification code sent to ',
-        codeSentEnd: '. Please check your inbox (including spam folder).',
-        sendError: '⚠️ Failed to send email. Please try again.',
-        enterCode: '❌ Please enter the verification code.',
-        codeExpired: '⏰ Code expired. Please request a new code.',
-        wrongCode: '❌ Incorrect code. Please try again.',
-        verifying: '✓ Verifying your subscription...',
+        submitting: '📨 Submitting your subscription...',
         success: '🎉 Subscription confirmed! Welcome to Malak Abdo | MENA ⇄ WORLD Community.',
-        saveError: '⚠️ Failed to save data. Please contact support.',
-        resending: '📨 Resending verification code...',
-        codeResent: '✅ New code sent to '
+        saveError: '⚠️ Failed to save data. Please try again.',
+        emailError: '⚠️ Subscription saved but welcome email failed to send.'
     };
     
     // ========== OTHER OPTION HANDLER ==========
@@ -330,7 +312,6 @@
         countrySelect.addEventListener('change', function() {
             const country = countrySelect.value;
             
-            // Show/hide country "Other" input
             if (country === 'Other') {
                 countryOtherGroup.classList.add('show');
                 countryOtherInput.required = true;
@@ -344,7 +325,6 @@
                 countryOtherInput.value = '';
             }
             
-            // If no country selected, hide city
             if (!country) {
                 cityWrapper.classList.remove('show');
                 citySelect.innerHTML = '<option value="">-- Select City --</option>';
@@ -353,7 +333,6 @@
                 return;
             }
             
-            // Populate city dropdown
             const cities = CITIES_BY_COUNTRY[country] || [];
             citySelect.innerHTML = '<option value="">-- Select City --</option>';
             cities.forEach(city => {
@@ -363,13 +342,11 @@
                 citySelect.appendChild(opt);
             });
             
-            // Show city wrapper with animation
             cityWrapper.classList.add('show');
             cityOtherGroup.classList.remove('show');
             cityOtherInput.value = '';
         });
         
-        // City "Other" handler
         citySelect.addEventListener('change', function() {
             if (citySelect.value === 'Other') {
                 cityOtherGroup.classList.add('show');
@@ -390,16 +367,12 @@
         return citySelect.value;
     }
     
-    function generateCode() {
-        return Math.floor(100000 + Math.random() * 900000).toString();
-    }
-    
-    async function sendWelcomeEmailWithCode(email, name, code) {
+    // ========== SEND WELCOME EMAIL (no code) ==========
+    async function sendWelcomeEmail(email, name) {
         const formData = new FormData();
-        formData.append('action', 'sendWelcomeWithCode');
+        formData.append('action', 'sendWelcome');
         formData.append('email', email);
         formData.append('name', name);
-        formData.append('code', code);
         
         try {
             await fetch(YOUR_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: formData });
@@ -410,13 +383,14 @@
         }
     }
     
+    // ========== SAVE TO GOOGLE SHEETS ==========
     async function saveToGoogleSheets(userData) {
         const formData = new FormData();
         formData.append('action', 'register');
         formData.append('name', userData.name);
         formData.append('email', userData.email);
         formData.append('country', userData.country);
-        formData.append('city', userData.city);          // ✅ NEW
+        formData.append('city', userData.city);
         formData.append('position', userData.position);
         formData.append('organization', userData.organization || '');
         formData.append('linkedin', userData.linkedin || '');
@@ -439,108 +413,91 @@
         element.textContent = text;
         element.className = type;
         element.style.display = 'block';
-        setTimeout(() => { element.style.display = 'none'; }, 5000);
     }
     
-    async function sendCode() {
+    function resetForm() {
+        document.getElementById('fullName').value = '';
+        document.getElementById('email').value = '';
+        document.getElementById('position').value = '';
+        document.getElementById('positionOther').value = '';
+        document.getElementById('positionOtherGroup').classList.remove('show');
+        document.getElementById('country').value = '';
+        document.getElementById('countryOther').value = '';
+        document.getElementById('countryOtherGroup').classList.remove('show');
+        document.getElementById('city').innerHTML = '<option value="">-- Select City --</option>';
+        document.getElementById('cityOther').value = '';
+        document.getElementById('cityOtherGroup').classList.remove('show');
+        document.getElementById('cityWrapper').classList.remove('show');
+        document.getElementById('organization').value = '';
+        document.getElementById('linkedin').value = '';
+        document.getElementById('consent').checked = false;
+    }
+    
+    // ========== MAIN SUBSCRIBE FUNCTION ==========
+    async function subscribe() {
         const name = document.getElementById('fullName').value.trim();
         const email = document.getElementById('email').value.trim();
         const position = getSelectValueWithOther('position', 'positionOther');
         const country = getSelectValueWithOther('country', 'countryOther');
-        const city = getCityValue();                     // ✅ NEW
+        const city = getCityValue();
         const organization = document.getElementById('organization').value.trim();
         const linkedin = document.getElementById('linkedin').value.trim();
         const consent = document.getElementById('consent').checked;
         
         const messageDiv = document.getElementById('registerMessage');
+        const subscribeBtn = document.getElementById('subscribeBtn');
         
+        // Validation
         if (!name) { showMessage(messageDiv, MSG.enterName, 'error-box'); return; }
         if (!email) { showMessage(messageDiv, MSG.enterEmail, 'error-box'); return; }
-        if (!email.includes('@')) { showMessage(messageDiv, MSG.validEmail, 'error-box'); return; }
+        if (!email.includes('@') || !email.includes('.')) { showMessage(messageDiv, MSG.validEmail, 'error-box'); return; }
         if (!position) { showMessage(messageDiv, MSG.enterPosition, 'error-box'); return; }
         if (!country) { showMessage(messageDiv, MSG.enterCountry, 'error-box'); return; }
-        if (!city) { showMessage(messageDiv, MSG.enterCity, 'error-box'); return; }   // ✅ NEW
+        if (!city) { showMessage(messageDiv, MSG.enterCity, 'error-box'); return; }
         if (!organization) { showMessage(messageDiv, MSG.enterOrganization, 'error-box'); return; }
         if (!consent) { showMessage(messageDiv, MSG.noConsent, 'error-box'); return; }
         
-        tempUserData = { name, email, position, country, city, organization, linkedin: linkedin || '' };
-        generatedCode = generateCode();
-        codeExpiry = Date.now() + 10 * 60 * 1000;
+        const userData = { name, email, position, country, city, organization, linkedin: linkedin || '' };
         
-        console.log('📧 Verification code:', generatedCode);
-        showMessage(messageDiv, MSG.sendingCode, 'info-box');
+        // Disable button while processing
+        subscribeBtn.disabled = true;
+        subscribeBtn.textContent = '⏳ Subscribing...';
+        showMessage(messageDiv, MSG.submitting, 'info-box');
         
-        const emailSent = await sendWelcomeEmailWithCode(email, name, generatedCode);
-        
-        if (emailSent) {
-            showMessage(messageDiv, MSG.codeSent + email + MSG.codeSentEnd, 'success-box');
-            document.getElementById('registrationSection').classList.add('hidden');
-            document.getElementById('otpSection').classList.remove('hidden');
-            document.getElementById('otpCode').value = '';
-            document.getElementById('otpMessage').style.display = 'none';
-        } else {
-            showMessage(messageDiv, MSG.sendError, 'error-box');
-        }
-    }
-    
-    async function verifyCode() {
-        const enteredCode = document.getElementById('otpCode').value.trim();
-        const messageDiv = document.getElementById('otpMessage');
-        
-        if (!enteredCode) { showMessage(messageDiv, MSG.enterCode, 'error-box'); return; }
-        if (Date.now() > codeExpiry) { showMessage(messageDiv, MSG.codeExpired, 'error-box'); return; }
-        if (enteredCode !== generatedCode) { showMessage(messageDiv, MSG.wrongCode, 'error-box'); return; }
-        
-        showMessage(messageDiv, MSG.verifying, 'info-box');
-        const saved = await saveToGoogleSheets(tempUserData);
+        // Save to Google Sheets
+        const saved = await saveToGoogleSheets(userData);
         
         if (saved) {
+            // Send welcome email (no verification code needed)
+            const emailSent = await sendWelcomeEmail(email, name);
+            
             showMessage(messageDiv, MSG.success, 'success-box');
-            localStorage.setItem('subscriberEmail', tempUserData.email);
-            localStorage.setItem('subscriberName', tempUserData.name);
+            localStorage.setItem('subscriberEmail', email);
+            localStorage.setItem('subscriberName', name);
+            
+            resetForm();
+            
+            if (!emailSent) {
+                console.warn('Welcome email failed to send');
+            }
         } else {
             showMessage(messageDiv, MSG.saveError, 'error-box');
         }
-    }
-    
-    async function resendCode() {
-        if (!tempUserData) return;
-        const messageDiv = document.getElementById('otpMessage');
         
-        generatedCode = generateCode();
-        codeExpiry = Date.now() + 10 * 60 * 1000;
-        console.log('📧 New verification code:', generatedCode);
-        showMessage(messageDiv, MSG.resending, 'info-box');
-        
-        const emailSent = await sendWelcomeEmailWithCode(tempUserData.email, tempUserData.name, generatedCode);
-        if (emailSent) {
-            showMessage(messageDiv, MSG.codeResent + tempUserData.email, 'success-box');
-        } else {
-            showMessage(messageDiv, MSG.sendError, 'error-box');
-        }
-    }
-    
-    function backToRegistration() {
-        document.getElementById('registrationSection').classList.remove('hidden');
-        document.getElementById('otpSection').classList.add('hidden');
-        document.getElementById('otpCode').value = '';
-        document.getElementById('registerMessage').style.display = 'none';
-        document.getElementById('otpMessage').style.display = 'none';
+        subscribeBtn.disabled = false;
+        subscribeBtn.textContent = '📨 Subscribe Now';
     }
     
     // Initialize
     setupOtherOption('position', 'positionOther');
     setupCountryCity();
     
-    document.getElementById('sendCodeBtn').onclick = sendCode;
-    document.getElementById('verifyBtn').onclick = verifyCode;
-    document.getElementById('resendLink').onclick = resendCode;
-    document.getElementById('backLink').onclick = backToRegistration;
+    document.getElementById('subscribeBtn').onclick = subscribe;
     
-    document.getElementById('email').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendCode(); });
-    document.getElementById('otpCode').addEventListener('keypress', (e) => { if (e.key === 'Enter') verifyCode(); });
+    document.getElementById('email').addEventListener('keypress', (e) => { if (e.key === 'Enter') subscribe(); });
+    document.getElementById('organization').addEventListener('keypress', (e) => { if (e.key === 'Enter') subscribe(); });
     
-    console.log('✅ Subscription page ready with City field');
+    console.log('✅ Subscription page ready (no OTP verification)');
 </script>
 </body>
 </html>
