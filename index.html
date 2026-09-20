@@ -199,7 +199,7 @@
             <label for="consent">I agree to receive emails and updates. I can unsubscribe at any time.</label>
         </div>
 
-        <button id="subscribeBtn">📨 Subscribe Now</button>
+        <button id="subscribeBtn" type="button">📨 Subscribe Now</button>
         <div id="registerMessage" class="error-box"></div>
     </div>
 
@@ -244,9 +244,7 @@
         enterCityOther: '❌ Please specify your city.',
         enterOrganization: '❌ Please enter your organization name.',
         noConsent: '❌ Please agree to receive emails to continue.',
-        submitting: '⏳ Submitting your subscription...',
-        success: '🎉 Subscription confirmed! Welcome to Malak Abdo | MENA ⇄ WORLD Community.',
-        saveError: '⚠️ Failed to save data. Please try again.'
+        success: '🎉 Subscription confirmed! Welcome to Malak Abdo | MENA ⇄ WORLD Community.'
     };
     
     function setupOtherOption(selectId, otherInputId) {
@@ -344,29 +342,34 @@
         return citySelect.value;
     }
     
-    async function saveToGoogleSheets(userData) {
-        const formData = new FormData();
-        formData.append('action', 'register');
-        formData.append('name', userData.name);
-        formData.append('email', userData.email);
-        formData.append('country', userData.country);
-        formData.append('city', userData.city);
-        formData.append('position', userData.position);
-        formData.append('organization', userData.organization || '');
-        formData.append('linkedin', userData.linkedin || '');
-        formData.append('verified', 'true');
-        
-        const now = new Date();
-        const formattedDate = now.toLocaleString('en-GB', { timeZone: 'UTC' });
-        formData.append('timestamp', formattedDate);
-        
-        try {
-            await fetch(YOUR_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: formData });
-            return true;
-        } catch (error) {
-            console.error('Failed to save data:', error);
-            return false;
-        }
+    // ========== FIRE-AND-FORGET SAVE (fully background) ==========
+    function saveToGoogleSheetsBackground(userData) {
+        // Wait 0ms so the UI thread is free to update first
+        setTimeout(function() {
+            const formData = new FormData();
+            formData.append('action', 'register');
+            formData.append('name', userData.name);
+            formData.append('email', userData.email);
+            formData.append('country', userData.country);
+            formData.append('city', userData.city);
+            formData.append('position', userData.position);
+            formData.append('organization', userData.organization || '');
+            formData.append('linkedin', userData.linkedin || '');
+            formData.append('verified', 'true');
+            
+            const now = new Date();
+            const formattedDate = now.toLocaleString('en-GB', { timeZone: 'UTC' });
+            formData.append('timestamp', formattedDate);
+            
+            fetch(YOUR_SCRIPT_URL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: formData,
+                keepalive: true
+            }).catch(function(err) {
+                console.warn('Background save failed (silent):', err);
+            });
+        }, 0);
     }
     
     function showMessage(element, text, type) {
@@ -393,7 +396,7 @@
         document.getElementById('consent').checked = false;
     }
     
-    async function subscribe() {
+    function subscribe() {
         const name = document.getElementById('fullName').value.trim();
         const email = document.getElementById('email').value.trim();
         const positionSelect = document.getElementById('position');
@@ -407,16 +410,11 @@
         const consent = document.getElementById('consent').checked;
         
         const messageDiv = document.getElementById('registerMessage');
-        const subscribeBtn = document.getElementById('subscribeBtn');
         
-        // Name
         if (!name) { showMessage(messageDiv, MSG.enterName, 'error-box'); return; }
-        
-        // Email
         if (!email) { showMessage(messageDiv, MSG.enterEmail, 'error-box'); return; }
         if (!email.includes('@') || !email.includes('.')) { showMessage(messageDiv, MSG.validEmail, 'error-box'); return; }
         
-        // Position
         if (!positionSelect.value) { showMessage(messageDiv, MSG.enterPosition, 'error-box'); return; }
         if (positionSelect.value === 'Other' && !positionOther.value.trim()) {
             showMessage(messageDiv, MSG.enterPositionOther, 'error-box');
@@ -424,7 +422,6 @@
             return;
         }
         
-        // Country
         if (!countrySelect.value) { showMessage(messageDiv, MSG.enterCountry, 'error-box'); return; }
         if (countrySelect.value === 'Other' && !countryOther.value.trim()) {
             showMessage(messageDiv, MSG.enterCountryOther, 'error-box');
@@ -432,7 +429,6 @@
             return;
         }
         
-        // City
         if (!citySelect.value) { showMessage(messageDiv, MSG.enterCity, 'error-box'); return; }
         if (citySelect.value === 'Other' && !cityOther.value.trim()) {
             showMessage(messageDiv, MSG.enterCityOther, 'error-box');
@@ -440,10 +436,7 @@
             return;
         }
         
-        // Organization
         if (!organization) { showMessage(messageDiv, MSG.enterOrganization, 'error-box'); return; }
-        
-        // Consent
         if (!consent) { showMessage(messageDiv, MSG.noConsent, 'error-box'); return; }
         
         const position = getSelectValueWithOther('position', 'positionOther');
@@ -452,19 +445,14 @@
         
         const userData = { name, email, position, country, city, organization, linkedin: linkedin || '' };
         
-        subscribeBtn.disabled = true;
-        subscribeBtn.textContent = '⏳ Subscribing...';
-        showMessage(messageDiv, MSG.submitting, 'info-box');
-        
+        // ===== SHOW SUCCESS IMMEDIATELY (no waiting) =====
         showMessage(messageDiv, MSG.success, 'success-box');
         localStorage.setItem('subscriberEmail', email);
         localStorage.setItem('subscriberName', name);
         resetForm();
         
-        subscribeBtn.disabled = false;
-        subscribeBtn.textContent = '📨 Subscribe Now';
-        
-        saveToGoogleSheets(userData);
+        // ===== SAVE IN BACKGROUND =====
+        saveToGoogleSheetsBackground(userData);
     }
     
     setupOtherOption('position', 'positionOther');
